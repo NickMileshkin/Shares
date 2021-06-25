@@ -1,7 +1,7 @@
 import sys  # sys нужен для передачи argv в QApplication
 import requests.exceptions
 from PyQt5 import QtWidgets, QtCore, QtGui
-from ui_MainWindow import Ui_MainWindow
+from UI_MainWindow import Ui_MainWindow
 import pandas as pd
 import apimoex
 
