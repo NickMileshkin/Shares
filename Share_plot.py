@@ -18,10 +18,10 @@ class MplCanvas(FigureCanvasQTAgg):
         super(MplCanvas, self).__init__(fig)
 
 
-class Stock_plot(QtWidgets.QMainWindow):
+class Share_plot(QtWidgets.QWidget):
 
     def __init__(self, ticket, firm_name, start_time, end_time):
-        super(Stock_plot, self).__init__()
+        super(Share_plot, self).__init__()
         with requests.Session() as session:
             share_json = apimoex.get_board_candles(session, ticket, interval=24, start=start_time, end=end_time)
             share_df = pd.DataFrame(share_json)
@@ -42,13 +42,8 @@ class Stock_plot(QtWidgets.QMainWindow):
         layout.addWidget(sc)
 
         # Create a placeholder widget to hold our toolbar and canvas.
-        widget = QtWidgets.QWidget()
-        widget.setLayout(layout)
-        self.setCentralWidget(widget)
+
+        self.setLayout(layout)
 
         self.show()
 
-
-app = QtWidgets.QApplication(sys.argv)
-w = Stock_plot("GAZP", "'Газпром'", "2020-05-20", "2021-06-24")
-app.exec_()

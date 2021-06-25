@@ -4,7 +4,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 from UI_MainWindow import Ui_MainWindow
 import pandas as pd
 import apimoex
-
+from Share_plot import Share_plot
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -14,7 +14,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.shares = []
         self.add_share()
         self.pushButton.clicked.connect(self.find_shares)
-
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.update)
+        self.timer.start(10000)
+        self.pushButton_create_plot.clicked.connect(self.create_plot)
     def find_shares(self):
         share_name = self.lineEdit.text()
 
@@ -46,6 +49,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             s.clicked.connect(s.open_shares)
             self.shares.append(s)
             self.scrollLayout_shares.addRow(s)
+
+    def update(self):
+        if self.active_share != None:
+            self.active_share.update()
+
+    def create_plot(self):
+        if self.widget_layout_all.count() != 0:
+            self.widget_layout_all.removeWidget(self.widget_layout_all.itemAt(0).widget())
+        if self.active_share != None:
+            try:
+                start = self.dateEdit.text().split('.')
+                end = self.dateEdit_2.text().split('.')
+                start = f'{start[2]}-{start[1]}-{start[0]}'
+                end = f'{end[2]}-{end[1]}-{end[0]}'
+                plot = Share_plot(self.active_share.ticket, self.active_share.firm_name, start, end)
+                self.widget_layout_all.addWidget(plot)
+            except:
+                print('Выход за границы')
 
 
 class ClickableWidget(QtWidgets.QWidget):  # класс для виджетов, на которые можно нажимать
@@ -85,7 +106,23 @@ class Share (ClickableWidget):
         self.data.append(str(r['marketdata']['data'][0][2]))
         self.data.append(str(r['marketdata']['data'][0][11]))
         self.data.append(str(r['marketdata']['data'][0][10]))
+        self.data.append(str(r['marketdata']['data'][0][32]))
 
+        main_window.label_firm_name.setText(self.data[0])
+        main_window.label_ticket.setText(self.ticket)
+        main_window.label_cost.setText(self.data[1])
+
+        if self.data[2][0] == "-":
+            main_window.label_dif_precent.setStyleSheet("color:red;")
+            main_window.label_dif_precent.setText(f"{self.data[2]}%")
+        else:
+            main_window.label_dif_precent.setText(f"+{self.data[2]}%")
+            main_window.label_dif_precent.setStyleSheet("color:green;")
+        main_window.label_offer.setText(self.data[3])
+        main_window.label_bid.setText(self.data[4])
+        main_window.label_max_cost.setText(self.data[5])
+        main_window.label_min_cost.setText(self.data[6])
+        main_window.label_update_time.setText(self.data[7])
 
     def open_shares(self):
         if main_window.active_share != self:
@@ -93,13 +130,14 @@ class Share (ClickableWidget):
                 main_window.active_share.container.setStyleSheet("background-color:white;")
             main_window.active_share = self
             self.update()
-
+            if main_window.widget_layout_all.count() != 0:
+                main_window.widget_layout_all.removeWidget(main_window.widget_layout_all.itemAt(0).widget())
             self.container.setStyleSheet("background-color:rgb(183, 242, 255);")
             main_window.lineEdit.setText("")
             main_window.find_shares()
 
             main_window.label_firm_name.setText(self.data[0])
-            main_window.label_8.setText(self.ticket)
+            main_window.label_ticket.setText(self.ticket)
             main_window.label_cost.setText(self.data[1])
 
             if self.data[2][0] == "-":
@@ -108,6 +146,12 @@ class Share (ClickableWidget):
             else:
                 main_window.label_dif_precent.setText(f"+{self.data[2]}%")
                 main_window.label_dif_precent.setStyleSheet("color:green;")
+            main_window.label_offer.setText(self.data[3])
+            main_window.label_bid.setText(self.data[4])
+            main_window.label_max_cost.setText(self.data[5])
+            main_window.label_min_cost.setText(self.data[6])
+            main_window.label_update_time.setText(self.data[7])
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
