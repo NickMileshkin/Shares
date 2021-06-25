@@ -215,4 +215,4 @@ class Ui_MainWindow(object):
         self.label_8.setText(_translate("MainWindow", "Время обновления:"))
         self.label_update_time.setText(_translate("MainWindow", "00:00:00"))
         self.label_11.setText(_translate("MainWindow", "Рекомендация по акциям:"))
-        self.label_12.setText(_translate("MainWindow", "Пока что-то ничего не знаю"))
+        self.label_12.setText(_translate("MainWindow", "Пока что ничего не знаю"))
