@@ -60,15 +60,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.widget_layout_all.count() != 0:
             self.widget_layout_all.removeWidget(self.widget_layout_all.itemAt(0).widget())
         if self.active_share != None:
-            try:
-                start = self.dateEdit.text().split('.')
-                end = self.dateEdit_2.text().split('.')
-                start = f'{start[2]}-{start[1]}-{start[0]}'
-                end = f'{end[2]}-{end[1]}-{end[0]}'
-                plot = SharePlotAll(self.active_share.ticket, self.active_share.firm_name, start, end)
-                self.widget_layout_all.addWidget(plot)
-            except:
-                print('Выход за границы')
+            start = self.dateEdit.text().split('.')
+            end = self.dateEdit_2.text().split('.')
+            start = f'{start[2]}-{start[1]}-{start[0]}'
+            end = f'{end[2]}-{end[1]}-{end[0]}'
+            plot = SharePlotAll(self.active_share.ticket, self.active_share.firm_name, start, end)
+            self.widget_layout_all.addWidget(plot)
+
 
 
 class ClickableWidget(QtWidgets.QWidget):  # класс для виджетов, на которые можно нажимать
