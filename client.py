@@ -4,7 +4,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 from UI_MainWindow import Ui_MainWindow
 import pandas as pd
 import apimoex
-from Share_plot import Share_plot
+from Share_plot import SharePlotAll, SharePlotNow
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -65,7 +65,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 end = self.dateEdit_2.text().split('.')
                 start = f'{start[2]}-{start[1]}-{start[0]}'
                 end = f'{end[2]}-{end[1]}-{end[0]}'
-                plot = Share_plot(self.active_share.ticket, self.active_share.firm_name, start, end)
+                plot = SharePlotAll(self.active_share.ticket, self.active_share.firm_name, start, end)
                 self.widget_layout_all.addWidget(plot)
             except:
                 print('Выход за границы')
@@ -101,8 +101,14 @@ class Share (ClickableWidget):
     def update(self):
         r = requests.get(self.url).json()
         self.data = []
-        self.plot_data.append(r['marketdata']['data'][0][4])
-        self.plot_time.append(r['marketdata']['data'][0][32])
+        if len(self.plot_time) < 10:
+            self.plot_data.append(r['marketdata']['data'][0][4])
+            self.plot_time.append(r['marketdata']['data'][0][32])
+        else:
+            self.plot_data.pop(0)
+            self.plot_time.pop(0)
+            self.plot_data.append(r['marketdata']['data'][0][4])
+            self.plot_time.append(r['marketdata']['data'][0][32])
         self.data.append(r['securities']['data'][0][9])
         self.data.append(str(r['marketdata']['data'][0][12]))
         self.data.append(str(r['marketdata']['data'][0][25]))
@@ -127,6 +133,11 @@ class Share (ClickableWidget):
         main_window.label_min_cost.setText(self.data[6])
         main_window.label_update_time.setText(self.data[7])
 
+        if main_window.widget_layout_now.count() != 0:
+            main_window.widget_layout_now.removeWidget(main_window.widget_layout_now.itemAt(0).widget())
+        plot_now = SharePlotNow(self.plot_time, self.plot_data)
+        main_window.widget_layout_now.addWidget(plot_now)
+
     def open_shares(self):
         if main_window.active_share != self:
             if main_window.active_share != None:
@@ -135,17 +146,23 @@ class Share (ClickableWidget):
             self.update()
             if main_window.widget_layout_all.count() != 0:
                 main_window.widget_layout_all.removeWidget(main_window.widget_layout_all.itemAt(0).widget())
-            plot = Share_plot(self.ticket, self.firm_name, None, None)
-            main_window.widget_layout_all.addWidget(plot)
+            plot_all = SharePlotAll(self.ticket, self.firm_name, None, None)
+            main_window.widget_layout_all.addWidget(plot_all)
+
+            if main_window.widget_layout_now.count() != 0:
+                main_window.widget_layout_now.removeWidget(main_window.widget_layout_now.itemAt(0).widget())
+            plot_now = SharePlotNow(self.plot_time, self.plot_data)
+            main_window.widget_layout_now.addWidget(plot_now)
+
             self.container.setStyleSheet("background-color:rgb(183, 242, 255);")
             main_window.lineEdit.setText("")
             main_window.find_shares()
 
-            main_window.dateEdit.setDate(QtCore.QDate(plot.f_edit[0], plot.f_edit[1], plot.f_edit[2]))
-            main_window.dateEdit_2.setDate(QtCore.QDate(plot.e_edit[0], plot.e_edit[1], plot.e_edit[2]))
+            main_window.dateEdit.setDate(QtCore.QDate(plot_all.f_edit[0], plot_all.f_edit[1], plot_all.f_edit[2]))
+            main_window.dateEdit_2.setDate(QtCore.QDate(plot_all.e_edit[0], plot_all.e_edit[1], plot_all.e_edit[2]))
 
-            main_window.dateEdit.setMinimumDate(QtCore.QDate(plot.f_edit[0], plot.f_edit[1], plot.f_edit[2]))
-            main_window.dateEdit_2.setMaximumDate(QtCore.QDate(plot.e_edit[0], plot.e_edit[1], plot.e_edit[2]))
+            main_window.dateEdit.setMinimumDate(QtCore.QDate(plot_all.f_edit[0], plot_all.f_edit[1], plot_all.f_edit[2]))
+            main_window.dateEdit_2.setMaximumDate(QtCore.QDate(plot_all.e_edit[0], plot_all.e_edit[1], plot_all.e_edit[2]))
 
             main_window.label_firm_name.setText(self.data[0])
             main_window.label_ticket.setText(self.ticket)

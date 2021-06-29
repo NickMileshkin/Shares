@@ -17,10 +17,10 @@ class MplCanvas(FigureCanvasQTAgg):
         super(MplCanvas, self).__init__(fig)
 
 
-class Share_plot(QtWidgets.QWidget):
+class SharePlotAll(QtWidgets.QWidget):
 
     def __init__(self, ticket, firm_name, start_time, end_time):
-        super(Share_plot, self).__init__()
+        super(SharePlotAll, self).__init__()
         with requests.Session() as session:
             if start_time != None:
                 share_json = apimoex.get_board_candles(session, ticket, interval=24, start=start_time, end=end_time)
@@ -61,5 +61,18 @@ class Share_plot(QtWidgets.QWidget):
 
         self.setLayout(layout)
 
-        self.show()
 
+class SharePlotNow(QtWidgets.QWidget):
+    def __init__(self, time, cost):
+        super(SharePlotNow, self).__init__()
+        self.cost = cost
+        self.time = time
+        sc = MplCanvas(self, width=12, height=4, dpi=80)
+        sc.axes.plot(self.time, self.cost)
+
+        layout = QtWidgets.QVBoxLayout()
+        layout.addWidget(sc)
+
+        # Create a placeholder widget to hold our toolbar and canvas.
+
+        self.setLayout(layout)

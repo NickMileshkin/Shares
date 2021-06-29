@@ -31,7 +31,12 @@ class Ui_MainWindow(object):
         self.pushButton = QtWidgets.QPushButton(self.layoutWidget)
         self.pushButton.setMinimumSize(QtCore.QSize(30, 30))
         self.pushButton.setMaximumSize(QtCore.QSize(30, 30))
-        self.pushButton.setObjectName("pushButton")
+        self.pushButton.setText("")
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("Search.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton.setIcon(icon)
+        self.pushButton.setIconSize(QtCore.QSize(25, 25))
+
         self.horizontalLayout.addWidget(self.pushButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
 
@@ -166,7 +171,7 @@ class Ui_MainWindow(object):
         self.label_7.setObjectName("label_7")
 
         self.label_ticket = QtWidgets.QLabel(self.centralwidget)
-        self.label_ticket.setGeometry(QtCore.QRect(630, 10, 71, 16))
+        self.label_ticket.setGeometry(QtCore.QRect(630, 8, 71, 16))
         self.label_ticket.setText("")
         self.label_ticket.setObjectName("label_ticket")
 
@@ -194,11 +199,11 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton.setText(_translate("MainWindow", "PushButton"))
+        self.pushButton.setText(_translate("MainWindow", ""))
         self.label.setText(_translate("MainWindow", "Показать изменения акций с "))
         self.label_2.setText(_translate("MainWindow", "по"))
         self.pushButton_create_plot.setText(_translate("MainWindow", "Вывести график"))
-        self.label_3.setText(_translate("MainWindow", "Название фирмы"))
+        self.label_3.setText(_translate("MainWindow", "Название фирмы:"))
         self.label_cost.setText(_translate("MainWindow", "0"))
         self.label_4.setText(_translate("MainWindow", "RUB"))
         self.label_dif_precent.setText(_translate("MainWindow", "0"))
