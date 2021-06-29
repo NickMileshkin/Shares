@@ -6,6 +6,7 @@ import pandas as pd
 import apimoex
 from Share_plot import Share_plot
 
+
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -18,6 +19,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.timer.timeout.connect(self.update)
         self.timer.start(10000)
         self.pushButton_create_plot.clicked.connect(self.create_plot)
+
     def find_shares(self):
         share_name = self.lineEdit.text()
 
@@ -85,6 +87,8 @@ class Share (ClickableWidget):
         self.data = []
         self.plot_data = []
         self.plot_time = []
+        self.start = ''
+        self.end = ''
         self.firm_name = name
         self.name = QtWidgets.QLabel(self.firm_name)
         self.container = QtWidgets.QWidget(self)
@@ -107,7 +111,6 @@ class Share (ClickableWidget):
         self.data.append(str(r['marketdata']['data'][0][11]))
         self.data.append(str(r['marketdata']['data'][0][10]))
         self.data.append(str(r['marketdata']['data'][0][32]))
-
         main_window.label_firm_name.setText(self.data[0])
         main_window.label_ticket.setText(self.ticket)
         main_window.label_cost.setText(self.data[1])
@@ -132,9 +135,17 @@ class Share (ClickableWidget):
             self.update()
             if main_window.widget_layout_all.count() != 0:
                 main_window.widget_layout_all.removeWidget(main_window.widget_layout_all.itemAt(0).widget())
+            plot = Share_plot(self.ticket, self.firm_name, None, None)
+            main_window.widget_layout_all.addWidget(plot)
             self.container.setStyleSheet("background-color:rgb(183, 242, 255);")
             main_window.lineEdit.setText("")
             main_window.find_shares()
+
+            main_window.dateEdit.setDate(QtCore.QDate(plot.f_edit[0], plot.f_edit[1], plot.f_edit[2]))
+            main_window.dateEdit_2.setDate(QtCore.QDate(plot.e_edit[0], plot.e_edit[1], plot.e_edit[2]))
+
+            main_window.dateEdit.setMinimumDate(QtCore.QDate(plot.f_edit[0], plot.f_edit[1], plot.f_edit[2]))
+            main_window.dateEdit_2.setMaximumDate(QtCore.QDate(plot.e_edit[0], plot.e_edit[1], plot.e_edit[2]))
 
             main_window.label_firm_name.setText(self.data[0])
             main_window.label_ticket.setText(self.ticket)
