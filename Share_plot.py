@@ -1,5 +1,5 @@
 import matplotlib
-matplotlib.use('Qt5Agg')
+
 import apimoex
 import requests
 import pandas as pd
@@ -7,6 +7,8 @@ from PyQt5 import QtWidgets
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 import matplotlib.dates
+
+matplotlib.use('Qt5Agg')
 
 
 class MplCanvas(FigureCanvasQTAgg):

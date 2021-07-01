@@ -68,7 +68,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.widget_layout_all.addWidget(plot)
 
 
-
 class ClickableWidget(QtWidgets.QWidget):  # класс для виджетов, на которые можно нажимать
     clicked = QtCore.pyqtSignal()
 
